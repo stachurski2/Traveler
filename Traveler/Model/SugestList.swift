@@ -17,7 +17,7 @@ class SugestList {
     var source:Bool?  //true - source, false - target
     var points:[Point]? = [Point]()
     let networking = PointFetching.sharedInstance
-    var viewController:MainViewController?
+    var viewController:UIViewController?
     
     func clear()->Void {
         points?.removeAll()
@@ -31,7 +31,7 @@ class SugestList {
         }
     }
 
-    func fetch(keyword:String, source:Bool, view:MainViewController) {
+    func fetch(keyword:String, source:Bool, view:UIViewController) {
         networking.updateData(keyword: keyword, type: source)
         networking.stopFetching()
         networking.startFetching(list: self)
@@ -65,18 +65,40 @@ class SugestList {
         return point.destription!
     }
     
+    func getType(row:IndexPath)->pointType {
+        let number = row.row
+        let point =  points![number]
+        return point.type!
+        
+    }
+    
+    
     func returnDataToControler()->Void {
-        guard let viewController = viewController else {return}
+        guard let viewController = viewController as? SuggestListViewController  else {
+           return
+        }
         viewController.reloadData()
     }
     
-    func returnErrorToControler(errorMesssage:String?)->Void {
-        guard let viewController = viewController,
-               let  errorMesssage = errorMesssage else {return}
-        let alert = UIAlertController(title: "Error", message: errorMesssage , preferredStyle: .alert)
-        let action = UIAlertAction(title: "OK", style: .default , handler: nil)
-        alert.addAction(action)
-        viewController.present(alert, animated: true, completion: nil)
+    func returnErrorToControler(errorMesssage:String?,code:Int?)->Void {
+        
+        
+        guard let viewController = viewController as? SuggestListViewController,
+               let  errorMesssage = errorMesssage,
+               let code = code else {return}
+        switch code {
+            case -999: print("canceled")
+            case 3840:
+               self.clear()
+                viewController.reloadData()
+            
+            
+            default:
+                let alert = UIAlertController(title: "Error", message: errorMesssage , preferredStyle: .alert)
+                let action = UIAlertAction(title: "OK", style: .default , handler: nil)
+                alert.addAction(action)
+                viewController.present(alert, animated: true, completion: nil)
+        }
         
     }
 }

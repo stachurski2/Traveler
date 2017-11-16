@@ -63,6 +63,14 @@ class PointFetching {
                 print("error occured")
                 self.state = .Failed
                 errorMessage = error?.localizedDescription
+                let err = error! as NSError
+                let code = err.code
+                print(code)
+                
+                let mainqueue =  DispatchQueue.main
+                mainqueue.sync {
+                    list.returnErrorToControler(errorMesssage: errorMessage,code:code)
+                }
                 
             }
             
@@ -98,7 +106,7 @@ class PointFetching {
                     if self.state == .Failed  {
                         let mainqueue =  DispatchQueue.main
                         mainqueue.sync {
-                            list.returnErrorToControler(errorMesssage: errorMessage)
+                            //list.returnErrorToControler(errorMesssage: errorMessage)
                         }
                         break;
                     }
@@ -109,25 +117,10 @@ class PointFetching {
             }
         }
     }
-
-    private init() {
-        var urlComponents = URLComponents()
-        urlComponents.scheme = "https"
-        urlComponents.host = "www.e-podroznik.pl"
-        urlComponents.path = "/public/suggest.do"
-        urlComponents.queryItems = [URLQueryItem(name: "query", value: "")]
-        self.url = URLRequest(url: urlComponents.url!)
-        self.urls = URLSession(configuration: .default)
-        self.task = urls.dataTask(with: url)
-        self.keyword = ""
-        self.type = true
-        self.url.httpMethod = "POST"
-        self.url.addValue("application/json", forHTTPHeaderField: "content-type")
-    }
     
     
     func updateData(keyword:String, type:Bool)->Void{
-     
+        
         self.keyword = keyword
         self.type = type
         var urlComponents = URLComponents()
@@ -145,13 +138,21 @@ class PointFetching {
         self.url  = URLRequest(url: url)
         self.urls = URLSession(configuration: .default)
     }
-    
-    
-        
 
-    
-
-    
+    private init() {
+        var urlComponents = URLComponents()
+        urlComponents.scheme = "https"
+        urlComponents.host = "www.e-podroznik.pl"
+        urlComponents.path = "/public/suggest.do"
+        urlComponents.queryItems = [URLQueryItem(name: "query", value: "")]
+        self.url = URLRequest(url: urlComponents.url!)
+        self.urls = URLSession(configuration: .default)
+        self.task = urls.dataTask(with: url)
+        self.keyword = ""
+        self.type = true
+        self.url.httpMethod = "POST"
+        self.url.addValue("application/json", forHTTPHeaderField: "content-type")
+    }
     
     private func requestServer(completion: @escaping((Error?,[String:AnyObject]?)->Void)){
         var urlComponents = URLComponents()

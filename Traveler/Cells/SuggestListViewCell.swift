@@ -15,6 +15,7 @@ class SuggestListViewCell: UITableViewCell {
     
     @IBOutlet weak var descrption: UILabel!
     
+    @IBOutlet weak var image0: UIImageView!
     
     
 }

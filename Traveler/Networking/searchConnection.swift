@@ -35,7 +35,7 @@ class SearchConnection {
     private func postRequest(task: Task, completion:@escaping ((String)->Void)){
         var urlC = URLComponents()
         urlC.scheme = "https"
-        urlC.host = "www.e-podroznik.pl"
+        urlC.host = "en.e-podroznik.pl"
         urlC.path = "/public/searchingResults.do"
         urlC.queryItems = [URLQueryItem(name: "method", value: "task")]
         urlC.queryItems?.append(URLQueryItem(name: "tseVw", value: "regularP"))

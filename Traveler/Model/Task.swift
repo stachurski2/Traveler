@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import SwiftSoup
+//import SwiftSoup
 import JavaScriptCore
 import UIKit
 
@@ -95,6 +95,11 @@ extension Task {
     func changeTime(stepper:Double)->Void {
 
         date = calendar.date(byAdding: .hour, value: Int(stepper) , to: todayDate)! }
+    
+    func changeDateTime(date:Date)->Void {
+        self.date = date
+    }
+    
     
     func changeDirectConnection(value:Bool)->Void {self.directConnection = value}
     

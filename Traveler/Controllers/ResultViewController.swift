@@ -12,13 +12,15 @@ import UIKit
 class ResultViewController: UIViewController {
     var content:String?
     let webView = UIWebView()
+    var conections:Connections = Connections()
     
-    
+    @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var navBar: UINavigationBar!
     
      override func viewDidLoad() {
         super.viewDidLoad()
-      
+        tableView.dataSource = self
+        
             
         
      }
@@ -26,25 +28,13 @@ class ResultViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        
-        
-       
-       
         let barBtnVar = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: nil)
         self.navigationItem.leftBarButtonItem = barBtnVar
         
-        self.view.addSubview(webView)
-        webView.translatesAutoresizingMaskIntoConstraints = false
 
-        view.addConstraint(NSLayoutConstraint(item: webView, attribute: .top, relatedBy: .equal, toItem: self.topLayoutGuide, attribute: .bottom, multiplier: 1, constant: 100))
-        view.addConstraint(NSLayoutConstraint(item: webView, attribute: .bottom, relatedBy: .equal, toItem: self.bottomLayoutGuide, attribute:.top, multiplier: 1, constant: 0))
-        
-        view.addConstraint(NSLayoutConstraint(item: webView, attribute: .leadingMargin, relatedBy: .equal, toItem: view, attribute: .leadingMargin ,multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: webView, attribute: .trailingMargin, relatedBy: .equal, toItem: view, attribute: .trailingMargin, multiplier: 1, constant: 0))
-       
         if content != nil {
-            webView.loadHTMLString(content!, baseURL: nil)
-            
+            conections.huskFromHtmlString(htmlContent: content!)
+            tableView.reloadData()
         }
         
     }
@@ -53,8 +43,39 @@ class ResultViewController: UIViewController {
     
     @IBAction func back(_ sender: Any) {
         _ = self.navigationController?.popViewController(animated: true)
-        print("back")
+      
     }
     
 
 }
+
+
+extension ResultViewController:UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return conections.conectionCount()
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell =  tableView.dequeueReusableCell(withIdentifier: "resultCell") as! ResultViewTableCell
+        cell.start.text = conections.startPoint(indexPath)
+        cell.end.text = conections.endPoint(indexPath)
+        cell.startTime.text = conections.startTime(indexPath)
+        cell.endTime.text = conections.endTime(indexPath)
+        cell.startDate.text = conections.startDate(indexPath)
+        cell.endDate.text = conections.endDate(indexPath)
+        cell.travelTime.text = "Time travel \(conections.travelTime(indexPath))"
+        let changes = conections.changes(indexPath)
+        if changes == 0 { cell.changes.text = "Direct Connection"; cell.changes.textColor = UIColor.red }
+        else {cell.changes.text = "Changes: \(changes)"}
+        
+        
+        
+        
+        
+         tableView.rowHeight = 120
+        return cell
+    }
+    
+    
+}
+
