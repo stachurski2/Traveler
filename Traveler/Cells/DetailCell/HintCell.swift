@@ -1,13 +1,14 @@
 //
-//  SuggestHeadCell.swift
-//  
+//  HintCell.swift
+//  Traveler
 //
-//  Created by Stanisaw Sobczyk on 18/11/2017.
+//  Created by Stanisaw Sobczyk on 16/12/2017.
+//  Copyright © 2017 Stanisaw Sobczyk. All rights reserved.
 //
 
 import UIKit
 
-class SuggestHeadCell: UITableViewCell {
+class HintCell: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
