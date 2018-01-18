@@ -42,8 +42,18 @@ class MainViewController: UIViewController, UITextFieldDelegate{
     var start:Choose = .empty
     var end:Choose = .empty
     let task = Task.sharedInstance
+    var conections = [Connection]()
+   
     
+    //loadingBox
+    let aSubView:UIView = UIView(frame: CGRect(x: 0, y: 0, width: 300, height: 100))
+    let label:UILabel =  UILabel(frame: CGRect(x:150, y:50, width:100, height:50))
+    let indicator:UIActivityIndicatorView = UIActivityIndicatorView(frame:  CGRect(x:250, y:50, width:10, height:10))
     
+    //coreData
+     lazy var coreData = CoreConnections("CoreConnection")
+
+  
    
     
     @IBOutlet weak var startField: UITextField!
@@ -51,21 +61,23 @@ class MainViewController: UIViewController, UITextFieldDelegate{
     @IBOutlet weak var detailStartPoint: UILabel!
     @IBOutlet weak var detailEndPoint: UILabel!
     
-   
-    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var tableview: UITableView!
+    
     
     @IBOutlet weak var dateTextField: UITextField!
     @IBOutlet weak var timeTextField: UITextField!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.dataSource = self
-        tableView.delegate = self
         dateTextField.text = task.showDate()
         timeTextField.text = task.showTime()
         startField.delegate = self
         endField.delegate = self
         self.navigationController?.setNavigationBarHidden(true, animated: true)
+        tableview.dataSource = self
+        tableview.delegate = self
+//        tableview.allowsSelectionDuringEditing = true
+ //       tableview.isEditing = true
     }
     
 
@@ -77,6 +89,7 @@ class MainViewController: UIViewController, UITextFieldDelegate{
         super.viewWillAppear(animated)
         dateTextField.text = task.showDate()
         timeTextField.text = task.showTime()
+        self.reloadData()
     }
 
 
@@ -148,16 +161,30 @@ class MainViewController: UIViewController, UITextFieldDelegate{
                 else {return}
             resultVC.task = task
         }
+        
+        if segue.identifier == "coreDetail" {
+            guard let content = sender as? Connection,
+                let resultVC = segue.destination as? DetailViewController
+                else { return }
+            resultVC.content = content
+            resultVC.state = .fromCoreData
+            print("Stops: \(content.intermediateStops!.count)")
+
+        }
+        
     }
     
-    // loading box
-    
-    let aSubView:UIView = UIView(frame: CGRect(x: 0, y: 0, width: 300, height: 100))
-    let label:UILabel =  UILabel(frame: CGRect(x:150, y:50, width:100, height:50))
-    let indicator:UIActivityIndicatorView = UIActivityIndicatorView(frame:  CGRect(x:250, y:50, width:10, height:10))
+   
     
     
-    func showLoadComunicate()->Void {
+
+    
+}
+
+
+
+extension MainViewController:loading {
+    func showLoadingComunicate() {
         label.text = "Loading!"
         aSubView.translatesAutoresizingMaskIntoConstraints = false
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -180,46 +207,94 @@ class MainViewController: UIViewController, UITextFieldDelegate{
         aSubView.addConstraint(NSLayoutConstraint(item: indicator, attribute: .trailing, relatedBy: .equal, toItem: aSubView, attribute: .trailing, multiplier: 1, constant: -30))
     }
     
-    
-    func hideLoadComunicate()->Void {
+    func hideLoadingComunicate() {
         indicator.stopAnimating()
         aSubView.removeFromSuperview()
+    }
+    
+    
+    func showError(_ message:String) {
+        let alert = UIAlertController(title: "Mistake", message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alert.addAction(action)
+        self.present(alert, animated: true, completion: nil)
+
+    }
+    
+    
+    
+    
+}
+
+extension MainViewController:UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return conections.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "connect") as! ConnectionTableCell
+        
+            guard let start = conections[indexPath.row].start, let end = conections[indexPath.row].end, let changes = conections[indexPath.row].numberOfChanges, let date = conections[indexPath.row].startDate else {return cell}
+            
+           
+
+        
+            cell.from.text = start
+            cell.to.text = end
+            switch changes{
+                case 1: cell.changes.text = "Direct Connection"
+                cell.changes.textColor = UIColor.red
+                cell.changes.font = cell.changes.font.withSize(10)
+                default:    cell.changes.text = "Changes: \(changes)"
+                cell.changes.textColor = UIColor.black
+                 cell.changes.font = cell.changes.font.withSize(14)
+            }
+            cell.date.text = date
+            
+        
+   
+        return cell
+    }
+    
+    
+    func reloadData() ->Void {
+        coreData = CoreConnections("CoreConnection")
+        conections = coreData.fetchData()
+        tableview.reloadData()
+        
         
     }
     
-}
 
-extension MainViewController: UITableViewDataSource, UITableViewDelegate {
     
-   public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
-    }
     
-    public  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
-        return cell
-
-    }
-    
-    public func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-    
-    public func reloadData() {
-        tableView.reloadData()
-    }
-    
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-         view.endEditing(true)
-    }
-    
-
     
 }
 
 
-
-
+extension MainViewController:UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "coreDetail", sender: conections[indexPath.row])
+    }
+    
+    
+    
+    func tableView(_ tableView: UITableView,
+                   trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration?
+    {
+        let deleteAction = UIContextualAction(style: .normal, title:  "Delete", handler: { (ac:UIContextualAction, view:UIView, success:(Bool) -> Void) in
+            
+            print("Delete at \(indexPath.row)")
+            self.coreData.deleteConnection(indexNumber: indexPath.row)
+            self.reloadData()
+            success(true)
+        })
+        deleteAction.backgroundColor = .red
+        
+        return UISwipeActionsConfiguration(actions: [deleteAction])
+    }
+    
+}
 
 
 

@@ -75,7 +75,7 @@ class SearchConnection {
                 print("Server answered with code: \(respon.statusCode)")
                     let html:String =  try String(contentsOf: url, encoding: .utf8)
                     completion(html)
-                    
+                    print(html)
                         
             }
             }

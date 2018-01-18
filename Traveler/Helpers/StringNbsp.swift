@@ -16,5 +16,22 @@ extension String {
     
     
     }
+    
+    
+    public mutating func extractType()->Void {
+        let keyword = self.index(after: "icon icon-round icon-left icon-transport".endIndex)
+        
+        self = String(self[keyword...])
+    
+    }
+    
+    public mutating func removePath()->Void {
+        
+        let keyword = self.index(after: "/public/searchingResultExtended.do".endIndex)
+        
+        self = String(self[keyword...])
+
+        
+    }
 
 }

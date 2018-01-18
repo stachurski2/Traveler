@@ -86,10 +86,51 @@ class Point {
       
     }
     
+    open func fetchID()->String {
+          guard let id = self.id else {return "0"}
+                    return String(describing:id)
+    }
+    
     open func getName()->String {
         guard let n = name else {return ""}
         return n
     }
+    
+    open func getType()->String {
+        switch self.type {
+        case .busStop?:
+            return "BUS_STOP"
+        case .groupStop?:
+            return "GROUP_STOP"
+        case .city?:
+            return "CITY"
+        case .bigCity?:
+            return "BIG_CITY"
+        case .street?:
+            return "STREET";
+        case .urbanStop?:
+            return "URBAN_STOP"
+        case .railStop?:
+            return "RAIL_STOP"
+        case .none:
+            return "CITY"
+        }
+    }
+    
+    open func getLat()->String {
+        return String(describing: self.coordinates?.latitude)
+    }
+    
+    open func getLon()->String {
+        return String(describing: self.coordinates?.longitude)
+    }
+    
+    open func getDesc()->String {
+        guard let dectrition = destription else {return ""}
+        return dectrition
+    }
+    
+    
     
     
 }

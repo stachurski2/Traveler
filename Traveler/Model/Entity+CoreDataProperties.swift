@@ -17,7 +17,7 @@ extension Entity {
     }
 
     @NSManaged public var name: String?
-    @NSManaged public var id: Int32
+    @NSManaged public var id: String?
     @NSManaged public var descripton: String?
 
 }

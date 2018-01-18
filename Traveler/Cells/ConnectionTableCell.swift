@@ -20,5 +20,8 @@ class ConnectionTableCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-
+    @IBOutlet weak var from: UILabel!
+    @IBOutlet weak var to: UILabel!
+    @IBOutlet weak var date: UILabel!
+    @IBOutlet weak var changes: UILabel!
 }

@@ -7,3 +7,10 @@
 //
 
 import Foundation
+
+
+protocol loading {
+    func showLoadingComunicate()->Void
+    func hideLoadingComunicate()->Void
+    func showError(_ message:String)
+}

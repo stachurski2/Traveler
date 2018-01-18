@@ -34,7 +34,7 @@ class Task {
         self.todayDate = Date()
         self.calendar = Calendar.current
         let minutes = calendar.component(.minute, from: todayDate)
-        for _ in 1...minutes { todayDate = calendar.date(byAdding: .minute, value: -1 , to: todayDate)!}
+        if minutes > 1 { for _ in 1...minutes { todayDate = calendar.date(byAdding: .minute, value: -1 , to: todayDate)!} }
         self.date = todayDate
         
     }
@@ -142,19 +142,28 @@ extension Task {
             let queue = DispatchQueue(label: "fetch")
              let mainqueue =  DispatchQueue.main
             queue.async {
-                guard let _ = self.startPoint, let _ = self.endPoint else {print("No complet data to send request"); self.stage = .dataCollected ;return}
+                guard let _ = self.startPoint, let _ = self.endPoint else {
+                    mainqueue.sync {
+                        viewController.showError("No complete data to send a request.")
+                    }
+                    self.stage = .dataCollected ;return}
                     let token = Token.sharedInstance
                 self.stage = .tokenFetching
                 mainqueue.sync {
-                    viewController.showLoadComunicate()
+                    viewController.showLoadingComunicate()
                 }
                     token.getHTMLContent(){ token, error in
                     if error != nil {
-                        print(error?.localizedDescription ?? String.self)
+                        guard let message = error?.localizedDescription else {return}
+                        mainqueue.sync {
+                             viewController.showError(message)
+                             viewController.hideLoadingComunicate()
+                            
+                        }
+                       
                         self.stage = .tokenFailed
                     }
                     else{
-                        print("token:\(token)")
                         self.stage = .tokenFetched}
                     }
                 while self.stage == .tokenFetching { sleep(UInt32(0.1))}
@@ -165,8 +174,10 @@ extension Task {
                         let con = SearchConnection()
                         let content = con.request(task: self)
                         mainqueue.sync {
-                            viewController.hideLoadComunicate()
-                            viewController.performSegue(withIdentifier: "showResult", sender: content)
+                            viewController.hideLoadingComunicate()
+                            if content == "result unavailable" { viewController.showError("Result is unavailable")}
+                            else {viewController.performSegue(withIdentifier: "showResult", sender: content)
+                            }
                         }
             
                     }

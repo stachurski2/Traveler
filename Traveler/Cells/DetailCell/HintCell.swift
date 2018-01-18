@@ -20,5 +20,36 @@ class HintCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-
+    @IBOutlet weak var hintText: UILabel!
+    
+    
+    func showHint(connection:Connection, indexPath:IndexPath)->Void{
+        let number = connection.subConnections.count - 1
+        switch indexPath.section {
+            case number:
+                switch indexPath.row {
+                    case 0:
+                        let number0 = (number+1)*2 - 1
+                        hintText.text = connection.hints?[number0]
+                    default:
+                        let number0 = (number+1)*2 + 1
+                        hintText.text = connection.hints?[number0]
+                }
+            
+            default:
+                let number0 = (indexPath.section + 1)*2 - 1
+                        hintText.text = connection.hints?[number0]
+            
+            
+            
+            
+            
+            
+            
+        }
+        
+        
+        
+    }
+    
 }

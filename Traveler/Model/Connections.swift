@@ -20,12 +20,15 @@ class Connections {
     
     func startPoint(_ index:IndexPath)->String {
         let i = index.row
-        return connect[i].start
+        guard let value =  connect[i].start else {return ""}
+        return value
     }
    
     func endPoint(_ index:IndexPath)->String {
         let i = index.row
-        return connect[i].end
+        guard let value =  connect[i].end else {return ""}
+        return value
+        
     }
     
     func startTime(_ index:IndexPath)->String {
@@ -98,9 +101,6 @@ class Connections {
             }
     
             for data in travelData {
-          //  try print(travelData.toString())
-          //   try print("Start no. \(numb):\(starts.get(numb-1).html()) at: \(departureTime.get(numb-1).html()), \(departureDate.get(numb-1).html())")
-          //  try print("End no. \(numb):\(ends.get(numb-1).html()) at: \(arrivalTime.get(numb-1).html()), \(arrivalDate.get(numb-1).html())")
                 
             var ttime =  try "\(travelTimes.get(numb-1).select("span.hours").html()) \(travelTimes.get(numb-1).select("span.minutes").html())"
             ttime.removeNbsp()
@@ -120,20 +120,38 @@ class Connections {
                 let numberofDatatas = subData1.size()
                 if numberofDatatas == numberofConnections {
                     for i in 1...numberofDatatas {
-                        print("Subconnection number: \(i)")
+                       // print("Subconnection number: \(i)")
                         let subData = subData1.eq(i-1)
-                        try print(" From: \(subData.select("div.travel-part").attr("data-source-admin-path")) to: \(subData.select("div.travel-part").attr("data-target-admin-path"))")
+                        //try print(" From: \(subData.select("div.travel-part").attr("data-source-admin-path")) to: \(subData.select("div.travel-part").attr("data-target-admin-path"))")
+                        
+                        let start = try subData.select("div.travel-part").attr("data-source-admin-path")
+                        let end = try subData.select("div.travel-part").attr("data-target-admin-path")
+                        var type = try subData.select("span.icon").attr("class")
+                        type.extractType()
+                        connection.addSubConnection(start, end, type)
+                        
                         var time =  try (" Duration time: \(subData.select("span.hours").html()) \(subData.select("span.minutes").html()) ")
                         time.removeNbsp()
-                        print(time)
+                       // print(time)
                         
     
                         
-                        try print(" type: \(subData.select("span.show-on-hover").html())")
+                     //   try print(" Company: \(subData.select("span.show-on-hover").html())")
+                        
+                        
+                        
+                      
+                        
+                        
+                        
+                      //   print(" Type: \(type.extractType())")
+                      
                         if try subData.select("span.integer-part").size() == 1 {
-                            try print(" price: \(subData.select("span.integer-part").html())\(subData.select("span.decimal-separator").html())\(subData.select("span.decimal-part").html()) \(subData.select("span.currency").html())")
+                        //    try print(" price: \(subData.select("span.integer-part").html())\(subData.select("span.decimal-separator").html())\(subData.select("span.decimal-part").html()) \(subData.select("span.currency").html())")
                         }
                     }
+                  
+
                     
                     
                 }
@@ -157,8 +175,15 @@ class Connections {
                             if classN == "travel-part connection-info" {
                                 print("Subconnection number: \(numb)")
                                 try print("from: \(change.attr("data-source-admin-path")) to: \(change.attr("data-target-admin-path"))")
+                                let start = try change.attr("data-source-admin-path")
+                                let end = try change.attr("data-target-admin-path")
+                                var type = try change.select("span.icon").attr("class")
+                                type.extractType()
+                                connection.addSubConnection(start, end, type)
+
                                 numb += 1
                             }
+                            
                         }
                     
                 }
@@ -171,7 +196,15 @@ class Connections {
                         if classN == "travel-part connection-info" {
                             print("Subconnection number: \(numb)")
                             try print("from: \(change.attr("data-source-admin-path")) to: \(change.attr("data-target-admin-path"))")
-                            try print("type:\(change.select("span.show-on-hover").html())")
+                            let start = try change.attr("data-source-admin-path")
+                            let end = try change.attr("data-target-admin-path")
+                            
+                           // try print("type:\(change.select("span.show-on-hover").html())")
+                            var type = try change.select("span.icon").attr("class")
+                            
+                            type.extractType()
+                            connection.addSubConnection(start, end, type)
+                            try print("Connection data:\(change.html())")
                             numb += 1
                         }
                     }
@@ -181,6 +214,8 @@ class Connections {
                 }
                // try print("More info link: \(data.attr("data-detailspath"))")
                 let link = try data.attr("data-detailspath")
+                let id = try data.attr("data-departure-timestamp")
+                connection.detailid = id
                 connection.defineLink(link: link)
                 connect.append(connection)
                 numb = numb + 1
@@ -194,6 +229,15 @@ class Connections {
         }
          print("Data count:\(connect.count)")
     }
+    
+    
+    func connection(_ index:IndexPath)->Connection {
+        let i = index.row
+        return connect[i]
+    }
+    
+
+    
     
     
    
