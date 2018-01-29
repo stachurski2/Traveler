@@ -24,45 +24,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TravelerTests/TravelerTests.swift"
-            timestampString = "538873762.39572"
+            timestampString = "538961476.9426171"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "63"
             endingLineNumber = "63"
             landmarkName = "testToken()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "TravelerTests.TravelerTests.testToken() -&gt; ()"
-                  moduleName = "TravelerTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/stanisawsobczyk/Desktop/Netguru%20exam/Traveler/Traveler/TravelerTests/TravelerTests.swift"
-                  timestampString = "538873763.064648"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "63"
-                  endingLineNumber = "63"
-                  offsetFromSymbolStart = "1572">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "implicit closure #2 : @autoclosure () -&gt; Swift.String in TravelerTests.TravelerTests.testToken() -&gt; ()"
-                  moduleName = "TravelerTests"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/stanisawsobczyk/Desktop/Netguru%20exam/Traveler/Traveler/TravelerTests/TravelerTests.swift"
-                  timestampString = "538873763.0670919"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "63"
-                  endingLineNumber = "63"
-                  offsetFromSymbolStart = "4">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -72,7 +40,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TravelerTests/TravelerTests.swift"
-            timestampString = "538873762.396379"
+            timestampString = "538961476.942971"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "61"
