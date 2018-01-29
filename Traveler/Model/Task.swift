@@ -152,7 +152,7 @@ extension Task {
                 mainqueue.sync {
                     viewController.showLoadingComunicate()
                 }
-                    token.getHTMLContent(){ token, error in
+                    token.get(){ token, error in
                     if error != nil {
                         guard let message = error?.localizedDescription else {return}
                         mainqueue.sync {

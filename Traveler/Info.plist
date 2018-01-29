@@ -8,8 +8,6 @@
 	<dict>
 		<key>www.e-podroznik.pl</key>
 		<dict>
-			<key>NSExceptionMinimumTLSVersion</key>
-			<string>TLSv1.1</string>
 			<key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
 			<true/>
 			<key>NSExceptionAllowsInsecureHTTPLoads</key>

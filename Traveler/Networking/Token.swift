@@ -17,7 +17,32 @@ enum tokenError:Error {
     case emptyContent
     case tokenUnavailable
     case huskingError
+    }
+
+
+extension tokenError:LocalizedError {
+    public var errorDescription: String? {
+    switch self {
+    case .emptyContent:
+    return NSLocalizedString("Fetched Content is empty", comment: "Empty Content")
+    
+    case .tokenUnavailable:
+        return NSLocalizedString("There is no tabToken in fetched data", comment: "Token unavailable")
+        
+    case .huskingError:
+        return NSLocalizedString("Cannot husk token from content", comment: "Husking Error")
+
+        }
+    }
+    
 }
+    
+    
+    
+
+    
+    
+
 
 
 class Token{
@@ -26,8 +51,8 @@ class Token{
     static let sharedInstance = Token()
     private init() { }
     
-    func fromString(htmlContent:String)->String{
-        do {
+    func fromString(htmlContent:String)throws -> String   {
+       // do {
             if htmlContent.count <= 0 { throw tokenError.emptyContent }
         var numberOfCharacters = htmlContent.count - 12 as Int
         var newString = NSString(string: htmlContent)
@@ -56,7 +81,8 @@ class Token{
                                 newString = newString.substring(from: value + 1) as NSString
                                 firstQmark = value
                     case .second: quatationMark = .third
-                    newString  = newString.substring(to: value - firstQmark + 11) as NSString;                             break
+                    newString  = newString.substring(to: value - firstQmark + 11) as NSString;
+                    break
                     case .third: break
                 }
             }
@@ -71,26 +97,11 @@ class Token{
         }
     
         return newString as String
-
-        }
-        catch tokenError.emptyContent  {
-            
-            return "Content is empty"
-        }
-        catch tokenError.huskingError {
-            return "Can't find quatation marks"
-        }
-        catch tokenError.tokenUnavailable {
-            return "Can't find tabToken definiton"
-        }
-        catch {
-            return ""
-        }
     
     }
     
     
-    func getHTMLContent(completion: @escaping((String,Error?)->Void)){
+    func get(completion: @escaping((String,Error?)->Void)){
         
         let url = URL(string: "https://www.e-podroznik.pl")
         let request = URLRequest(url: url!)
@@ -105,19 +116,29 @@ class Token{
                 let content = try document.select("head")
                 let next = try content.select("script").attr("type", "text/javascript").attr("script-type", "runBeforeGetScripts")
                 var next1 = try next.toString()
-                next1 = self.fromString(htmlContent: next1)
+                next1 = try self.fromString(htmlContent: next1)
+                print(next1)
                 completion(next1,nil)
             }
+                
+            catch let tokenError as tokenError {
+               
+                completion("", tokenError)
+            }
             catch {
-                let message = "Problem with connect serwer: \(error.localizedDescription) or HTML parse is impossible"
-                completion(message,error)
+                completion("",error)
             }
         
             
             
         }
+        
         task.resume()
         
+        
     }
+    
+    
+    
     
 }

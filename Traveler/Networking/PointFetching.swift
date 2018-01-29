@@ -26,22 +26,7 @@ class PointFetching {
 
     let queue = DispatchQueue(label: "view")
     
-    public var state = StateFetch.Ready {
-        didSet {
-            switch(state){
-            case .Ready:
-                print ("Initialize")
-            case .Executing:
-                print ("Fetch procedure get started")
-            case .Finished:
-                print ("Fetch procedure has finished")
-            case .Failed:
-                print ("Fetch failure")
-            case .Stopped:
-                print ("Fetch canceled")
-            }
-        }
-    }
+    public var state = StateFetch.Ready
     
     func stopFetching()->Void {
         if state == .Executing {
@@ -65,7 +50,6 @@ class PointFetching {
                 errorMessage = error?.localizedDescription
                 let err = error! as NSError
                 let code = err.code
-                print(code)
                 
                 let mainqueue =  DispatchQueue.main
                 mainqueue.sync {
@@ -134,6 +118,7 @@ class PointFetching {
         else {
             urlComponents.queryItems?.append(URLQueryItem(name: "requestKind", value: "DESTINATION"))
         }
+        urlComponents.queryItems?.append(URLQueryItem(name: "type", value: "AUTO"))
         guard let url = urlComponents.url else {return}
         self.url  = URLRequest(url: url)
         self.urls = URLSession(configuration: .default)
@@ -141,7 +126,7 @@ class PointFetching {
 
     private init() {
         var urlComponents = URLComponents()
-        urlComponents.scheme = "https"
+        urlComponents.scheme = "http"
         urlComponents.host = "www.e-podroznik.pl"
         urlComponents.path = "/public/suggest.do"
         urlComponents.queryItems = [URLQueryItem(name: "query", value: "")]
@@ -166,6 +151,7 @@ class PointFetching {
         else {
             urlComponents.queryItems?.append(URLQueryItem(name: "requestKind", value: "DESTINATION"))
         }
+        urlComponents.queryItems?.append(URLQueryItem(name: "type", value: "AUTO"))
         guard let url = urlComponents.url else {return}
         self.url = URLRequest(url: url)
         self.url.httpMethod = "POST"
@@ -181,6 +167,8 @@ class PointFetching {
                      completion(error,nil)
                 }
                 else {
+                    
+                    print(data!)
                     let values:[String:AnyObject] = (try JSONSerialization.jsonObject(with: data!, options: []) as? [String:AnyObject])!
                         completion(error,values)
                 }
