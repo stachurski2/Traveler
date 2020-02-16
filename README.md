@@ -1,6 +1,7 @@
 # Traveler
 
-Own-made ios app to use e-podroznik.pl service via iPhone, written in swift 3/4 with SwiftSoup pod.
+Own-made ios app to use e-podroznik.pl service on iPhone, written in swift.
 
 Disclaimer:
-Usage of app could be illegal with regulations of service of e-podroznik.pl. I've written the app to education use. 
+Usage of app could be illegal according to e-podroznik.pl regulations. 
+I've written the app on educational purposes. 
